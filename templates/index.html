@@ -61,10 +61,57 @@
             font-size: 20px;
             text-decoration: none;
         }
+
+        /* SIDEBAR */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            z-index: 1000;
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: #1e1e1e;
+            padding: 20px;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        #sidebar button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            background: #333;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
+
+<!-- BOTÓN -->
+<div style="position: fixed; top: 15px; right: 15px; z-index: 1002;">
+    <button onclick="abrirMenu()">☰</button>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="cerrarMenu()"></div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+    <h2>Categorías</h2>
+    <div id="categorias"></div>
+</div>
 
 <!-- CARRITO -->
 <div id="carrito">
@@ -78,17 +125,15 @@
 
 <!-- PRODUCTOS -->
 {% for p in productos %}
-<div class="card">
+<div class="card" data-categoria="{{ p.Categoria }}">
     <h3>{{ p.Nombre }}</h3>
     <p>{{ p.Categoria }}</p>
 
-    <!-- ✅ FORMATO SEGURO -->
     <p class="precio">S/ {{ p.Precio }}</p>
 
     <img src="{{ p.Imagen if p.Imagen else 'https://via.placeholder.com/200' }}">
 
-    <!-- ✅ SEGURO (no rompe por comillas) -->
-    <button onclick="agregarCarrito('{{ p.Nombre or '' }}', '{{ p.Precio or 0 }}')"></button>
+    <button onclick="agregarCarrito('{{ p.Nombre or '' }}', '{{ p.Precio or 0 }}')">
         🛒 Agregar
     </button>
 
@@ -107,6 +152,7 @@
 <script>
 let carrito = [];
 
+// CARRITO
 function agregarCarrito(nombre, precio) {
     carrito.push({nombre, precio});
     renderCarrito();
@@ -140,6 +186,58 @@ function enviarPedido() {
 
     window.open(`https://wa.me/51902808789?text=${mensaje}`);
 }
+
+// SIDEBAR
+function abrirMenu() {
+    document.getElementById("sidebar").style.right = "0";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function cerrarMenu() {
+    document.getElementById("sidebar").style.right = "-300px";
+    document.getElementById("overlay").style.display = "none";
+}
+
+// CATEGORÍAS
+let categorias = new Set();
+
+document.querySelectorAll(".card").forEach(card => {
+    if (card.dataset.categoria) {
+        categorias.add(card.dataset.categoria);
+    }
+});
+
+let contenedor = document.getElementById("categorias");
+
+// TODOS
+let btnAll = document.createElement("button");
+btnAll.innerText = "Todos";
+btnAll.onclick = () => {
+    document.querySelectorAll(".card").forEach(card => {
+        card.style.display = "inline-block";
+    });
+    cerrarMenu();
+};
+contenedor.appendChild(btnAll);
+
+// POR CATEGORÍA
+categorias.forEach(cat => {
+    let btn = document.createElement("button");
+    btn.innerText = cat;
+
+    btn.onclick = () => {
+        document.querySelectorAll(".card").forEach(card => {
+            if (card.dataset.categoria === cat) {
+                card.style.display = "inline-block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+        cerrarMenu();
+    };
+
+    contenedor.appendChild(btn);
+});
 </script>
 
 </body>
