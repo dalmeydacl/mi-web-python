@@ -88,7 +88,7 @@
     <img src="{{ p.Imagen if p.Imagen else 'https://via.placeholder.com/200' }}">
 
     <!-- ✅ SEGURO (no rompe por comillas) -->
-    <button onclick='agregarCarrito({{ p.Nombre|tojson }}, {{ p.Precio|tojson }})'>
+    <button onclick="agregarCarrito('{{ p.Nombre or '' }}', '{{ p.Precio or 0 }}')"></button>
         🛒 Agregar
     </button>
 
