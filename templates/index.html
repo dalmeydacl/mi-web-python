@@ -1,37 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mi primera web</title>
+    <title>LIDIA MOTORS</title>
     <style>
         body {
             font-family: Arial;
-            text-align: center;
-            background-color: #1e1e1e;
+            background: #111;
             color: white;
+            text-align: center;
         }
-        h1 {
-            color: #00ffcc;
+        .card {
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            width: 250px;
+            background: #1e1e1e;
+            border-radius: 10px;
         }
-        button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #00ffcc;
-            cursor: pointer;
+        img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
         }
     </style>
 </head>
 <body>
 
-    <h1>🚀 Mi primera página con Python</h1>
-    <p>Estoy usando Flask</p>
+<h1>🚗 LIDIA MOTORS</h1>
+<p>Catálogo de productos</p>
 
-    <button onclick="mensaje()">Haz clic</button>
+{% for p in productos %}
+<div class="card">
+    <h3>{{ p.Nombre }}</h3>
+    <p><b>Categoría:</b> {{ p.Categoria }}</p>
+    <p><b>Subcategoría:</b> {{ p.Subcategoria }}</p>
+    <p><b>Precio:</b> S/ {{ p.Precio }}</p>
+    <p><b>Stock:</b> {{ p.Stock }}</p>
 
-    <script>
-        function mensaje() {
-            alert("Hola desde JavaScript 😄");
-        }
-    </script>
+    <img src="{{ p.Imagen }}" alt="producto">
+</div>
+{% endfor %}
 
 </body>
 </html>
