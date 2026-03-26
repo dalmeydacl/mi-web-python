@@ -83,9 +83,9 @@
     <p>{{ p.Categoria }}</p>
 
     <!-- ✅ FORMATO SEGURO -->
-    <p class="precio">S/ {{ "%.2f"|format(p.Precio|float) }}</p>
+    <p class="precio">S/ {{ p.Precio }}</p>
 
-    <img src="{{ p.Imagen }}">
+    <img src="{{ p.Imagen if p.Imagen else 'https://via.placeholder.com/200' }}">
 
     <!-- ✅ SEGURO (no rompe por comillas) -->
     <button onclick='agregarCarrito({{ p.Nombre|tojson }}, {{ p.Precio|tojson }})'>
