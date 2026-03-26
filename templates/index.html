@@ -7,36 +7,57 @@
             font-family: Arial;
             background: #111;
             color: white;
-            text-align: center;
+            margin: 0;
+            padding-left: 270px; /* espacio para carrito */
+        }
+
+        /* GRID PRODUCTOS */
+        .contenedor-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 20px;
         }
 
         .card {
             border: 1px solid #333;
-            padding: 15px;
-            margin: 10px;
-            display: inline-block;
-            width: 250px;
+            padding: 10px;
             background: #1e1e1e;
             border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
         }
 
         img {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
         }
 
         button {
             margin: 5px;
-            padding: 8px;
+            padding: 6px;
             cursor: pointer;
             border-radius: 5px;
             border: none;
+            font-size: 12px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+        }
+
+        .card p {
+            font-size: 12px;
         }
 
         .precio {
             color: #00ffcc;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
 
@@ -47,7 +68,8 @@
             background: #222;
             padding: 10px;
             border-radius: 10px;
-            width: 250px;
+            width: 240px;
+            font-size: 13px;
         }
 
         .ws-float {
@@ -120,10 +142,12 @@
     <button onclick="enviarPedido()">Comprar por WhatsApp</button>
 </div>
 
-<h1>🚗 LIDIA MOTORS</h1>
-<p>Catálogo de productos</p>
+<h1 style="text-align:center;">🚗 LIDIA MOTORS</h1>
+<p style="text-align:center;">Catálogo de productos</p>
 
-<!-- PRODUCTOS -->
+<!-- CONTENEDOR -->
+<div class="contenedor-productos">
+
 {% for p in productos %}
 <div class="card" data-categoria="{{ p.Categoria }}">
     <h3>{{ p.Nombre }}</h3>
@@ -143,6 +167,8 @@
     </a>
 </div>
 {% endfor %}
+
+</div>
 
 <!-- BOTÓN FLOTANTE -->
 <a class="ws-float"
@@ -214,13 +240,13 @@ let btnAll = document.createElement("button");
 btnAll.innerText = "Todos";
 btnAll.onclick = () => {
     document.querySelectorAll(".card").forEach(card => {
-        card.style.display = "inline-block";
+        card.style.display = "block";
     });
     cerrarMenu();
 };
 contenedor.appendChild(btnAll);
 
-// POR CATEGORÍA
+// FILTRO
 categorias.forEach(cat => {
     let btn = document.createElement("button");
     btn.innerText = cat;
@@ -228,7 +254,7 @@ categorias.forEach(cat => {
     btn.onclick = () => {
         document.querySelectorAll(".card").forEach(card => {
             if (card.dataset.categoria === cat) {
-                card.style.display = "inline-block";
+                card.style.display = "block";
             } else {
                 card.style.display = "none";
             }
