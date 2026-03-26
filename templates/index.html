@@ -82,11 +82,13 @@
     <h3>{{ p.Nombre }}</h3>
     <p>{{ p.Categoria }}</p>
 
-    <p class="precio">S/ {{ "{:,.2f}".format(p.Precio|float) }}</p>
+    <!-- ✅ FORMATO SEGURO -->
+    <p class="precio">S/ {{ "%.2f"|format(p.Precio|float) }}</p>
 
     <img src="{{ p.Imagen }}">
 
-    <button onclick="agregarCarrito('{{ p.Nombre }}', '{{ p.Precio }}')">
+    <!-- ✅ SEGURO (no rompe por comillas) -->
+    <button onclick='agregarCarrito({{ p.Nombre|tojson }}, {{ p.Precio|tojson }})'>
         🛒 Agregar
     </button>
 
