@@ -9,6 +9,7 @@
             color: white;
             text-align: center;
         }
+
         .card {
             border: 1px solid #333;
             padding: 15px;
@@ -18,20 +19,40 @@
             background: #1e1e1e;
             border-radius: 10px;
         }
+
         img {
             width: 200px;
             height: 200px;
             object-fit: cover;
         }
+
+        button {
+            margin: 5px;
+            padding: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
+
+<!-- BOTÓN HAMBURGUESA -->
+<div style="position: fixed; top: 10px; right: 10px;">
+    <button onclick="toggleMenu()">☰</button>
+</div>
+
+<!-- MENÚ -->
+<div id="menu" style="display:none; position: fixed; top: 50px; right: 10px; background: #222; padding: 10px; border-radius: 10px;">
+    <h3>Categorías</h3>
+    <div id="categorias"></div>
+</div>
 
 <h1>🚗 LIDIA MOTORS</h1>
 <p>Catálogo de productos</p>
 
+<!-- PRODUCTOS -->
 {% for p in productos %}
-<div class="card">
+<div class="card" data-categoria="{{ p.Categoria }}">
     <h3>{{ p.Nombre }}</h3>
     <p><b>Categoría:</b> {{ p.Categoria }}</p>
     <p><b>Subcategoría:</b> {{ p.Subcategoria }}</p>
@@ -41,6 +62,52 @@
     <img src="{{ p.Imagen }}" alt="producto">
 </div>
 {% endfor %}
+
+<!-- SCRIPT -->
+<script>
+function toggleMenu() {
+    let menu = document.getElementById("menu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+}
+
+// Obtener categorías únicas
+let categorias = new Set();
+
+document.querySelectorAll(".card").forEach(card => {
+    categorias.add(card.dataset.categoria);
+});
+
+let contenedor = document.getElementById("categorias");
+
+// BOTÓN "TODOS"
+let btnAll = document.createElement("button");
+btnAll.innerText = "Todos";
+btnAll.onclick = () => {
+    document.querySelectorAll(".card").forEach(card => {
+        card.style.display = "inline-block";
+    });
+};
+contenedor.appendChild(btnAll);
+
+// Crear botones dinámicos
+categorias.forEach(cat => {
+    let btn = document.createElement("button");
+    btn.innerText = cat;
+    btn.onclick = () => filtrar(cat);
+    contenedor.appendChild(btn);
+});
+
+// Función filtrar
+function filtrar(categoria) {
+    document.querySelectorAll(".card").forEach(card => {
+        if (card.dataset.categoria === categoria) {
+            card.style.display = "inline-block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+</script>
 
 </body>
 </html>
