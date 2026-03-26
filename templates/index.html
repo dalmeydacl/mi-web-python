@@ -30,21 +30,47 @@
             margin: 5px;
             padding: 8px;
             cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .precio {
+            color: #00ffcc;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #carrito {
+            position: fixed;
+            left: 10px;
+            top: 50px;
+            background: #222;
+            padding: 10px;
+            border-radius: 10px;
+            width: 250px;
+        }
+
+        .ws-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: green;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 20px;
+            text-decoration: none;
         }
     </style>
 </head>
 
 <body>
 
-<!-- BOTÓN HAMBURGUESA -->
-<div style="position: fixed; top: 10px; right: 10px;">
-    <button onclick="toggleMenu()">☰</button>
-</div>
-
-<!-- MENÚ -->
-<div id="menu" style="display:none; position: fixed; top: 50px; right: 10px; background: #222; padding: 10px; border-radius: 10px;">
-    <h3>Categorías</h3>
-    <div id="categorias"></div>
+<!-- CARRITO -->
+<div id="carrito">
+    <h3>🛒 Carrito</h3>
+    <ul id="listaCarrito"></ul>
+    <button onclick="enviarPedido()">Comprar por WhatsApp</button>
 </div>
 
 <h1>🚗 LIDIA MOTORS</h1>
@@ -52,60 +78,65 @@
 
 <!-- PRODUCTOS -->
 {% for p in productos %}
-<div class="card" data-categoria="{{ p.Categoria }}">
+<div class="card">
     <h3>{{ p.Nombre }}</h3>
-    <p><b>Categoría:</b> {{ p.Categoria }}</p>
-    <p><b>Subcategoría:</b> {{ p.Subcategoria }}</p>
-    <p><b>Precio:</b> S/ {{ p.Precio }}</p>
-    <p><b>Stock:</b> {{ p.Stock }}</p>
+    <p>{{ p.Categoria }}</p>
 
-    <img src="{{ p.Imagen }}" alt="producto">
+    <p class="precio">S/ {{ "{:,.2f}".format(p.Precio|float) }}</p>
+
+    <img src="{{ p.Imagen }}">
+
+    <button onclick="agregarCarrito('{{ p.Nombre }}', '{{ p.Precio }}')">
+        🛒 Agregar
+    </button>
+
+    <a target="_blank"
+       href="https://wa.me/51902808789?text=Hola,%20quiero%20comprar%20{{ p.Nombre }}">
+       <button>📲 WhatsApp</button>
+    </a>
 </div>
 {% endfor %}
 
-<!-- SCRIPT -->
+<!-- BOTÓN FLOTANTE -->
+<a class="ws-float"
+   href="https://wa.me/51902808789"
+   target="_blank">💬</a>
+
 <script>
-function toggleMenu() {
-    let menu = document.getElementById("menu");
-    menu.style.display = menu.style.display === "none" ? "block" : "none";
+let carrito = [];
+
+function agregarCarrito(nombre, precio) {
+    carrito.push({nombre, precio});
+    renderCarrito();
 }
 
-// Obtener categorías únicas
-let categorias = new Set();
+function renderCarrito() {
+    let lista = document.getElementById("listaCarrito");
+    lista.innerHTML = "";
 
-document.querySelectorAll(".card").forEach(card => {
-    categorias.add(card.dataset.categoria);
-});
-
-let contenedor = document.getElementById("categorias");
-
-// BOTÓN "TODOS"
-let btnAll = document.createElement("button");
-btnAll.innerText = "Todos";
-btnAll.onclick = () => {
-    document.querySelectorAll(".card").forEach(card => {
-        card.style.display = "inline-block";
+    carrito.forEach((item, index) => {
+        let li = document.createElement("li");
+        li.innerHTML = `
+            ${item.nombre} - S/ ${item.precio}
+            <button onclick="eliminar(${index})">❌</button>
+        `;
+        lista.appendChild(li);
     });
-};
-contenedor.appendChild(btnAll);
+}
 
-// Crear botones dinámicos
-categorias.forEach(cat => {
-    let btn = document.createElement("button");
-    btn.innerText = cat;
-    btn.onclick = () => filtrar(cat);
-    contenedor.appendChild(btn);
-});
+function eliminar(index) {
+    carrito.splice(index, 1);
+    renderCarrito();
+}
 
-// Función filtrar
-function filtrar(categoria) {
-    document.querySelectorAll(".card").forEach(card => {
-        if (card.dataset.categoria === categoria) {
-            card.style.display = "inline-block";
-        } else {
-            card.style.display = "none";
-        }
+function enviarPedido() {
+    let mensaje = "Hola, quiero comprar:%0A";
+
+    carrito.forEach(item => {
+        mensaje += `- ${item.nombre} (S/ ${item.precio})%0A`;
     });
+
+    window.open(`https://wa.me/51902808789?text=${mensaje}`);
 }
 </script>
 
